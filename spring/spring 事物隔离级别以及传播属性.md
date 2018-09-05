@@ -39,8 +39,8 @@ ServiceA.methodA已经起了事务，这时调用ServiceB.methodB，ServiceB.met
 #### 7： PROPAGATION_NESTED
 理解Nested的关键是savepoint。他与PROPAGATION_REQUIRES_NEW的区别是，PROPAGATION_REQUIRES_NEW另起一个事务，将会与他的父事务相互独立，
 而Nested的事务和他的父事务是相依的，他的提交是要等和他的父事务一块提交的。也就是说，如果父事务最后回滚，他也要回滚的。
-而Nested事务的好处是他有一个savepoint。
-*****************************************
+而Nested事务的好处是他有一个savepoint。<br>
+```Java
 ServiceA {
 /**
 * 事务属性配置为 PROPAGATION_REQUIRED
@@ -54,20 +54,25 @@ ServiceB.methodB(); //PROPAGATION_NESTED 级别
 }
 }
 }
-********************************************
+```
 也就是说ServiceB.methodB失败回滚，那么ServiceA.methodA也会回滚到savepoint点上，ServiceA.methodA可以选择另外一个分支，比如
 ServiceC.methodC，继续执行，来尝试完成自己的事务。
 但是这个事务并没有在EJB标准中定义。
 
 Spring事务的隔离级别<br>
- 1. ISOLATION_DEFAULT： 这是一个PlatfromTransactionManager默认的隔离级别，使用数据库默认的事务隔离级别.
+ 1. ISOLATION_DEFAULT： <br>
+      这是一个PlatfromTransactionManager默认的隔离级别，使用数据库默认的事务隔离级别.<br>
       另外四个与JDBC的隔离级别相对应<br>
- 2. ISOLATION_READ_UNCOMMITTED： 这是事务最低的隔离级别，它充许令外一个事务可以看到这个事务未提交的数据。
+ 2. ISOLATION_READ_UNCOMMITTED： <br>
+      这是事务最低的隔离级别，它充许令外一个事务可以看到这个事务未提交的数据。<br>
       这种隔离级别会产生脏读，不可重复读和幻像读。<br>
- 3. ISOLATION_READ_COMMITTED： 保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据<br>
- 4. ISOLATION_REPEATABLE_READ： 这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。
+ 3. ISOLATION_READ_COMMITTED： <br>
+      保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据<br>
+ 4. ISOLATION_REPEATABLE_READ： <br>
+      这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。<br>
       它除了保证一个事务不能读取另一个事务未提交的数据外，还保证了避免下面的情况产生(不可重复读)。<br>
- 5. ISOLATION_SERIALIZABLE 这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。
+ 5. ISOLATION_SERIALIZABLE :<br>
+      这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。<br>
       除了防止脏读，不可重复读外，还避免了幻像读。<br>
 
 什么是脏数据，脏读，不可重复读，幻觉读？<br>
