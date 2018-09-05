@@ -13,7 +13,7 @@ ServiceA.methodA已经起了事务，这时调用ServiceB.methodB，ServiceB.met
 的事务内部，就不再起新的事务。而假如ServiceA.methodA运行的时候发现自己没有在事务中，他就会为自己分配一个事务。
 这样，在ServiceA.methodA或者在ServiceB.methodB内的任何地方出现异常，事务都会被回滚。即使ServiceB.methodB的事务已经被
 提交，但是ServiceA.methodA在接下来fail要回滚，ServiceB.methodB也要回滚
-
+![](https://github.com/zgz21/technology/blob/master/spring/img/1.png)
 
 #### 2： PROPAGATION_SUPPORTS
 如果当前在事务中，即以事务的形式运行，如果当前不再一个事务中，那么就以非事务的形式运行
@@ -58,6 +58,7 @@ ServiceB.methodB(); //PROPAGATION_NESTED 级别
 也就是说ServiceB.methodB失败回滚，那么ServiceA.methodA也会回滚到savepoint点上，ServiceA.methodA可以选择另外一个分支，比如
 ServiceC.methodC，继续执行，来尝试完成自己的事务。
 但是这个事务并没有在EJB标准中定义。
+![](https://github.com/zgz21/technology/blob/master/spring/img/2.png)
 
 Spring事务的隔离级别<br>
 ===
